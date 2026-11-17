@@ -1,0 +1,131 @@
+/* ============================================================
+   Mridhul Sharma — Portfolio
+   Design tokens. Single source of truth for colour, type,
+   space, radius and motion.
+
+   DIRECTION: "Telemetry"
+   The visual language of instrumentation rather than racing
+   pastiche — timing screens, split times, data overlays.
+   Precise mono numerals, hairline rules, a dark field, and
+   exactly one signal colour. One warm inversion (the Café
+   sector) is the only place the field flips.
+
+   Phase 1 adds sector themes by overriding --field-*,
+   --ink-* and --signal on a [data-sector] attribute.
+   Nothing else should be overridden.
+   ============================================================ */
+
+:root {
+  /* ---------- Field (backgrounds) ---------- */
+  --field-base:      #0a0b0d;   /* page */
+  --field-raised:    #121418;   /* cards, metric cells */
+  --field-high:      #1a1d23;   /* hover, active */
+  --field-inset:     #060708;   /* wells, code */
+
+  /* ---------- Ink (foregrounds) ---------- */
+  --ink-primary:     #f2f3f5;
+  --ink-secondary:   #9aa0aa;
+  --ink-tertiary:    #636a75;
+  --ink-inverse:     #0a0b0d;
+
+  /* ---------- Line ---------- */
+  --line-hairline:   #23272e;
+  --line-strong:     #343a44;
+
+  /* ---------- Signal ----------
+     One accent. Hot instrument orange — brake glow, warning
+     lamp, split-time delta. Never used decoratively: it marks
+     the single most important thing in a view. */
+  --signal:          #ff4d1c;
+  --signal-dim:      #c2380f;
+  --signal-wash:     rgba(255, 77, 28, 0.12);
+
+  /* ---------- Status (used sparingly, in data only) ---------- */
+  --status-good:     #34d399;
+  --status-warn:     #fbbf24;
+  --status-bad:      #f87171;
+
+  /* ---------- Focus ---------- */
+  --focus-ring:      #6aa9ff;
+
+  /* ---------- Type families ----------
+     Phase 1: self-host woff2 subsets, drop the Google link. */
+  --font-display: "Archivo", "Archivo Variable", ui-sans-serif, system-ui,
+                  -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body:    "Archivo", ui-sans-serif, system-ui, -apple-system,
+                  "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+                  Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* ---------- Type scale (fluid) ---------- */
+  --t-display:    clamp(2.75rem, 7.5vw, 6rem);
+  --t-title:      clamp(1.875rem, 4vw, 3rem);
+  --t-section:    clamp(1.125rem, 1.6vw, 1.375rem);
+  --t-body:       1.0625rem;
+  --t-small:      0.9375rem;
+  --t-meta:       0.75rem;
+  --t-metric:     clamp(1.5rem, 3vw, 2.25rem);
+
+  --lh-tight:     1.04;
+  --lh-snug:      1.22;
+  --lh-body:      1.62;
+
+  --tracking-display: -0.03em;
+  --tracking-title:   -0.02em;
+  --tracking-meta:     0.1em;
+
+  /* ---------- Space (4px base) ---------- */
+  --s-1:  0.25rem;
+  --s-2:  0.5rem;
+  --s-3:  0.75rem;
+  --s-4:  1rem;
+  --s-6:  1.5rem;
+  --s-8:  2rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+  --s-24: 6rem;
+  --s-32: 8rem;
+  --s-48: 12rem;
+
+  /* ---------- Layout ---------- */
+  --measure:      68ch;
+  --page-max:     1440px;
+  --rail-w:       13rem;
+  --gutter:       clamp(1.25rem, 4vw, 3rem);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  /* ---------- Motion ----------
+     Phase 1: GSAP defaults must match these.
+     gsap.defaults({ ease: "power3.out", duration: 0.85 })
+     Lenis: { lerp: 0.08, wheelMultiplier: 0.9, smoothWheel: true } */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-entry:  cubic-bezier(0.22, 1, 0.36, 1);
+
+  --dur-tap:   120ms;
+  --dur-quick: 240ms;
+  --dur-base:  480ms;
+  --dur-slow:  900ms;
+}
+
+/* Café sector — the one warm inversion. Phase 1 applies this
+   to a scroll range; here it is declared so the system is
+   complete and Phase 1 does not invent a second palette. */
+[data-sector="cafe"] {
+  --field-base:    #f4ece1;
+  --field-raised:  #ece1d2;
+  --field-high:    #e2d4c1;
+  --field-inset:   #fbf6ef;
+  --ink-primary:   #191411;
+  --ink-secondary: #5d5248;
+  --ink-tertiary:  #8a7b6d;
+  --ink-inverse:   #f4ece1;
+  --line-hairline: #d8c9b6;
+  --line-strong:   #bda98f;
+  --signal:        #b4542a;
+  --signal-dim:    #8c3f1e;
+  --signal-wash:   rgba(180, 84, 42, 0.12);
+}

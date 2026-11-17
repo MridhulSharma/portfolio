@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mridhul Sharma — Software &amp; AI Systems Engineer</title>
+<meta name="description" content="Senior CS undergraduate. Civic advisory infrastructure for autonomous fleets, a property-tax abatement platform, a pose-driven racing game, and the scheduling system that staffs nine locations.">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Mridhul Sharma — Software &amp; AI Systems Engineer">
+<meta property="og:description" content="Systems that state a guarantee and then enforce it. Five projects, with the numbers.">
+<!-- TODO Phase 1: og:image (1200x630) and og:url once the domain is live. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@400..600&display=swap">
+
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/pitlane.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="page page--split">
+
+  <!-- ============ TIMING TOWER ============ -->
+  <nav class="tower" aria-label="Sections">
+    <p class="tower__label">Selected work</p>
+    <ul class="tower__list">
+      <li><a class="tower__link" href="#flosstime"><span class="tower__idx">01</span><span>Flosstime</span></a></li>
+      <li><a class="tower__link" href="#signum"><span class="tower__idx">02</span><span>Signum</span></a></li>
+      <li><a class="tower__link" href="#donna"><span class="tower__idx">03</span><span>Donna</span></a></li>
+      <li><a class="tower__link" href="#volta"><span class="tower__idx">04</span><span>Volta</span></a></li>
+      <li><a class="tower__link" href="#decibels"><span class="tower__idx">05</span><span>Decibels</span></a></li>
+      <li><a class="tower__link" href="#credo"><span class="tower__idx">06</span><span>How I work</span></a></li>
+    </ul>
+  </nav>
+
+  <main id="main">
+
+    <!-- ============ MASTHEAD ============ -->
+    <header class="masthead">
+      <p class="masthead__eyebrow">Senior CS undergraduate &middot; Boston</p>
+      <h1 class="masthead__name">Mridhul Sharma</h1>
+      <p class="masthead__lede">
+        I build systems that <strong>state a guarantee and then enforce it</strong> —
+        at the broker, in the schema, in the compiler — rather than by convention
+        and hope.
+      </p>
+      <p class="masthead__meta">
+        <span>Software Engineering</span>
+        <span>AI &amp; ML Systems</span>
+        <span>Frontend</span>
+      </p>
+      <div class="links">
+        <a class="link-btn" href="https://github.com/MridhulSharma" rel="me">GitHub</a>
+        <!-- TODO: add LinkedIn, résumé PDF, and a contact address you are happy
+             to publish. Left out deliberately rather than guessed. -->
+      </div>
+    </header>
+
+    <!-- ============ 01 FLOSSTIME ============ -->
+    <article class="project" id="flosstime">
+      <div class="project__head">
+        <p class="project__index">01 &mdash; Production</p>
+        <h2 class="project__title">Flosstime scheduling system</h2>
+        <p class="project__lede">
+          The system that staffs nine locations, built from an empty repository
+          and shipped to production in one summer.
+        </p>
+        <p class="project__role">Automated Systems Intern &middot; Flosstime, Boston &middot; Jun&ndash;Aug 2025</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <p class="metric__value"><em>70%</em></p>
+          <p class="metric__label">less time spent on manual coordination</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">17<span aria-hidden="true">+</span></p>
+          <p class="metric__label"><span class="vh">More than 17 </span>hours a week returned to managers</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">9 / 30<span aria-hidden="true">+</span></p>
+          <p class="metric__label">locations, and the staff scheduled across them</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>The problem</h3>
+        <p>
+          Scheduling was entirely manual. Managers coordinated more than thirty
+          staff across nine locations by hand — who was available, who was
+          qualified, who had already been assigned somewhere else — and reworked
+          all of it whenever anything changed.
+        </p>
+        <p>
+          There was no system to extend and no codebase to inherit. The first part
+          of the job was not writing code. It was reconstructing how the manual
+          process actually worked, including the rules nobody had written down,
+          and turning that into something a system could enforce.
+        </p>
+
+        <h3>The hard part was correctness, not scheduling</h3>
+        <p class="thesis">
+          Several managers edit overlapping schedules at the same time. A
+          scheduler that quietly lets two people assign the same staff member to
+          two places has failed at the one thing it exists to do.
+        </p>
+        <p>
+          I designed the data model around that constraint from the beginning:
+          normalized PostgreSQL schemas for the relational core — staff,
+          locations, shifts, assignments — with MongoDB for the parts of the data
+          that did not fit a fixed shape. The schemas were built so that
+          concurrent edits to the same schedule resolve correctly instead of
+          overwriting one another, and so staffing rules are checked as edits
+          happen rather than discovered afterwards, when someone is already in the
+          wrong place.
+        </p>
+        <p>
+          On top of that I built the backend service layer in Python and SQL. The
+          design priority was that requirements would keep moving — new locations
+          would open, scheduling rules would change — so new locations and new
+          rules can be added without rewriting the core. The parts most likely to
+          change were deliberately kept away from the parts most expensive to
+          break.
+        </p>
+
+        <h3>What I would point to</h3>
+        <p>
+          The simulation tooling. Rather than relying on manual testing, I wrote
+          tooling that runs the scheduler against edge cases and failure
+          scenarios: understaffed days, conflicting assignments, rule combinations
+          that rarely occur in practice. Broken schedules surface during testing
+          instead of in front of staff. For a system whose failures land on real
+          people's workdays, that mattered more to me than any individual feature.
+        </p>
+
+        <h3>Outcome</h3>
+        <p>
+          Shipped to production before the internship ended. Managers across the
+          nine locations rely on it daily.
+        </p>
+        <p>
+          What I took from the summer was mostly about ownership. Because nothing
+          existed beforehand, every decision was mine to make and mine to defend:
+          what to model, what the system should enforce versus leave to a human,
+          what counted as finished. Most of the engineering went into the cases
+          where data was incomplete, two managers disagreed, or one rule
+          contradicted another.
+        </p>
+
+        <ul class="stack">
+          <li>Python</li><li>SQL</li><li>PostgreSQL</li><li>MongoDB</li>
+          <li>Concurrency control</li><li>Simulation testing</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- ============ 02 SIGNUM ============ -->
+    <article class="project" id="signum">
+      <div class="project__head">
+        <p class="project__index">02 &mdash; Multi-agent systems</p>
+        <h2 class="project__title">Signum</h2>
+        <p class="project__lede">
+          Civic advisory infrastructure for autonomous fleets. A neutral layer
+          that turns public municipal feeds into cryptographically signed,
+          self-expiring hazard advisories any operator can consume.
+        </p>
+        <p class="project__role">Team Signifer, 3 people &middot; AI Applications Hackathon &middot; My scope: architecture, agent pipeline, policy compiler, evaluation harness, 3D viewer</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <p class="metric__value"><em>2.9&ndash;9.1s</em></p>
+          <p class="metric__label">median, first public signal to signed advisory</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">1,505</p>
+          <p class="metric__label">passing tests across 123 modules, including property-based tests</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">$0.249</p>
+          <p class="metric__label">total model spend across 20 evaluated runs, against a $25 guard</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>The problem</h3>
+        <p>
+          No authoritative, machine-readable channel exists through which a city
+          can publish a road hazard once and have every robotaxi operator receive
+          it. The status quo is bilateral and manual — a hotline and a PDF per
+          operator — so a city's integration cost scales linearly with the number
+          of fleets operating in it.
+        </p>
+
+        <h3>The system</h3>
+        <p>
+          Signum converts public municipal feeds — National Weather Service
+          alerts, USGS stream gauges, Austin signal-status and free-text dispatch
+          records — into signed, self-expiring GeoJSON advisories. A multi-agent
+          pipeline runs per-class sentinels into evidence fusion, an action
+          proposer, an adversarial critic, and finally a deterministic policy
+          compiler. Each advisory carries a hazard class, an action drawn from a
+          fixed playbook vocabulary, a corroborated geometry, a validity window,
+          and the evidence it rests on.
+        </p>
+
+        <h3>The engineering thesis</h3>
+        <p class="thesis">
+          Models interpret; they never authorize.
+        </p>
+        <p>
+          No agent can publish. A Redis ACL makes the compiler the single writer
+          to the advisory stream, enforced at the broker rather than by
+          convention. Around it: per-class area and lifetime caps, a refusal to
+          isolate any hospital or fire station, two-key human approval for
+          severity-4 advisories, Ed25519 signatures any consumer can verify, and a
+          hash-chained audit log that reconstructs every decision.
+        </p>
+
+        <h3>What the evaluation showed</h3>
+        <p>
+          Across all baseline runs the unadvised fleet missed the hazard; every
+          feed-reading variant missed none. Under conflicting evidence the gate
+          refused a 558&nbsp;km&sup2; uncorroborated flood polygon against a
+          12&nbsp;km&sup2; class cap — a refusal no human approval can override.
+          Prompt injection embedded in feed text produced no actionable advisory,
+          and the defence is structural rather than filtered: feed text never
+          reaches an instruction slot.
+        </p>
+        <p>
+          I built the harness so each variant is a configuration flag on one
+          codebase, which makes the ablation impossible to rig. That constraint
+          was the point of it.
+        </p>
+
+        <h3>Hardening after the deadline</h3>
+        <p>
+          Two things I am glad I chased. I diagnosed a silent cross-language
+          contract drift in which six frame validators rejected every pipeline
+          message, then replaced the hand-written contracts on both sides with
+          fixtures generated from the server's own builders, so the two cannot
+          diverge undetected again. And I corrected a simulator gate that rendered
+          corridor advisories inert, cutting hazard entries and remote-assist
+          requests by 67% with throughput unchanged.
+        </p>
+
+        <ul class="stack">
+          <li>Python 3.12</li><li>Pydantic v2</li><li>FastAPI</li>
+          <li>Redis Streams</li><li>PostGIS</li><li>igraph</li>
+          <li>Ed25519</li><li>CesiumJS</li><li>Hypothesis</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- ============ 03 DONNA ============ -->
+    <article class="project" id="donna">
+      <div class="project__head">
+        <p class="project__index">03 &mdash; Applied modelling</p>
+        <h2 class="project__title">Donna</h2>
+        <p class="project__lede">
+          A free, client-side platform that tells a Boston homeowner whether their
+          property is over-assessed, on what legal ground, and by when they have
+          to file — without an appraiser or an attorney.
+        </p>
+        <p class="project__role">Originated and own the project &middot; scope, legal-accuracy requirements, architecture</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <p class="metric__value">36% <em>&rarr;</em> 15.6%</p>
+          <p class="metric__label">false-positive over-assessment flags, across the full dataset</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">266 <em>&rarr;</em> 119<span aria-hidden="true">KB</span></p>
+          <p class="metric__label"><span class="vh">266 to 119 kilobytes of </span>initial JavaScript, gzipped</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">107</p>
+          <p class="metric__label">automated tests, including WCAG 2.1 AA invariants</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>Architecture</h3>
+        <p>
+          React 19, TypeScript in strict mode, Vite, Tailwind, Radix UI and
+          pdf-lib. No backend, no accounts, no telemetry — it deploys as static
+          assets at zero marginal cost per user, and nobody's property data leaves
+          their browser. Two sources normalise to a single <code>Property</code>
+          type: a locally extracted parcel database of 4,284 parcels and 5,338
+          recorded transfers, built by a <code>node:sqlite</code> ETL, and the
+          Analyze Boston CKAN API read live in-browser.
+        </p>
+        <p>
+          The CKAN client discovers its resource ID at runtime and resolves fields
+          through alias lists and pattern matching, because the city's schema
+          drifts annually — <code>TOTAL_VALUE</code> became <code>AV_TOTAL</code>,
+          and one year shipped a column named <code>LIVING _AREA</code> with an
+          embedded space. Comparable cohorts are paged in full and filtered
+          server-side by land-use class, because row order follows parcel ID
+          geographically, which makes a truncated cohort biased rather than merely
+          small.
+        </p>
+
+        <h3>The analytical engine</h3>
+        <p>
+          The core is a sales-comparison valuation. Transfers are screened for
+          arm's-length character — nominal transfers, foreclosure deeds and master
+          deeds are excluded, each with its reason retained for disclosure.
+          Adjustments for time, floor area, age and condition are derived by OLS
+          regression over local sales rather than assumed.
+        </p>
+        <p class="thesis">
+          The model only runs when it has earned the right to: n&nbsp;&ge;&nbsp;30,
+          R&sup2;&nbsp;&ge;&nbsp;0.35, elasticities inside valuer-accepted bands.
+          Otherwise it degrades to a two-parameter time trend and says so, on
+          screen.
+        </p>
+        <p>
+          Output is an interquartile range carrying a four-factor confidence
+          score, and an assessment is flagged only above the range's upper bound.
+          A secondary equity comparison is retained but deliberately subordinated:
+          Massachusetts requires proof of an intentional discriminatory scheme for
+          disproportionate-assessment claims, a threshold the Appellate Tax Board
+          routinely rejects. Leading a homeowner toward that argument would be
+          leading them toward losing.
+        </p>
+
+        <h3>Correctness that is legal, not numerical</h3>
+        <p>
+          Four jurisdictional defects found and corrected: appeal deadlines
+          miscounted from February&nbsp;1 rather than the filing date, a misstated
+          Appellate Tax Board entry fee, unlabelled fiscal-year data, and a
+          countdown rendered in the viewer's timezone rather than Boston's
+          statutory cut-off. Each of those would have cost a real person a real
+          deadline.
+        </p>
+        <p>
+          107 automated tests (Vitest, happy-dom) cover statutory date arithmetic,
+          regression coefficient recovery, comparable selection, official PDF
+          form-field population, rendered output, and accessibility invariants —
+          single <code>h1</code>, heading hierarchy, label association, live-region
+          behaviour, and state that does not depend on colour alone. CI enforces
+          lint, test and build, and a scheduled workflow watches the municipal
+          source for fiscal-year rollover and schema drift, opening an issue
+          automatically.
+        </p>
+
+        <ul class="stack">
+          <li>React 19</li><li>TypeScript (strict)</li><li>Vite</li>
+          <li>Tailwind</li><li>Radix UI</li><li>pdf-lib</li>
+          <li>node:sqlite</li><li>OLS regression</li><li>Vitest</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- ============ 04 VOLTA ============ -->
+    <article class="project" id="volta">
+      <div class="project__head">
+        <p class="project__index">04 &mdash; Real-time &amp; 3D</p>
+        <h2 class="project__title">Volta</h2>
+        <p class="project__lede">
+          Your reps drive a Formula&nbsp;1 car around a fully rendered circuit.
+          A webcam is the only hardware — no controller, no wearables, no markers.
+          Clean form makes you faster.
+        </p>
+        <p class="project__role">Pose pipeline, form analyzer, 3D scene and real-time layer</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <p class="metric__value">33</p>
+          <p class="metric__label">body landmarks tracked per frame, streamed as structured events</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value"><em>2</em> reps</p>
+          <p class="metric__label">to self-calibrate to a new athlete's range of motion</p>
+        </div>
+        <div class="metric">
+          <p class="metric__value">1&times; &rarr; 6&times;</p>
+          <p class="metric__label">speed scaling, with boost gated on form score</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>How it works</h3>
+        <p>
+          Two halves talking in real time. A Python vision server tracks 33 body
+          landmarks per frame through MediaPipe's Pose Landmarker and OpenCV; a
+          custom curl analyzer turns those into joint angles for each arm
+          independently and detects reps from the angle phases. The browser
+          receives a structured JSON payload over WebSocket for every processed
+          frame — rep count, form score, both elbow angles, rep phase, calibration
+          status, active warnings — and a Zustand store turns that into game
+          state. A second channel streams the annotated camera feed as MJPEG, so
+          the athlete sees their own skeleton inside the HUD, joints turning red
+          when the analyzer flags a problem.
+        </p>
+
+        <h3>The idea worth stealing</h3>
+        <p class="thesis">
+          Hardcoded thresholds fit one body. The analyzer learns yours in the
+          first two reps, then flags deviations from your baseline rather than
+          from an average.
+        </p>
+        <p>
+          It records top and bottom elbow angles, lowering speed, wrist path and
+          left&ndash;right symmetry, adds a 10% leniency margin, and from rep three
+          onward catches incomplete curls, fast lowering, an unsteady arm, uneven
+          sides and a drifting wrist path. Form score then drives the game: full
+          boost above 80, medium from 50 to 80, minimal below. Doing the exercise
+          well is the only way to win.
+        </p>
+
+        <h3>Things that broke, and what fixed them</h3>
+        <ul>
+          <li>
+            <strong>WebGL context loss.</strong> The scene exhausted GPU memory on
+            some machines. Reduced shadow, DPR and antialiasing cost, and added
+            context-loss handlers.
+          </li>
+          <li>
+            <strong>Spline-to-track alignment.</strong> The car floated off the
+            road through elevation changes. Measured the track's real bounding box
+            and recalibrated control points against actual road mesh data, with
+            per-frame raycasting against the asphalt keeping it planted.
+          </li>
+          <li>
+            <strong>Threading.</strong> Computer vision runs on a background
+            thread and pushes results into the asyncio event loop, so inference
+            never blocks the broadcast.
+          </li>
+          <li>
+            <strong>Demos that must not fail.</strong> If the pose server is not
+            reachable within four seconds the hook falls back to simulated reps
+            and retries every five, so the game always runs in front of an
+            audience.
+          </li>
+        </ul>
+
+        <h3>Why it generalises</h3>
+        <p>
+          Swap the curl analyzer for a squat, push-up or pitching-phase analyzer
+          and the pipeline — detect movement, stream structured events, trigger a
+          response — is unchanged. That event-driven design is why the project
+          drew interest from a sports performance facility building a markerless
+          biomechanics system.
+        </p>
+
+        <ul class="stack">
+          <li>Next.js 16</li><li>Three.js</li><li>React Three Fiber</li>
+          <li>Zustand</li><li>MediaPipe Pose</li><li>OpenCV</li>
+          <li>WebSocket</li><li>MJPEG</li><li>Web Speech API</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- ============ 05 DECIBELS ============ -->
+    <article class="project" id="decibels">
+      <div class="project__head">
+        <p class="project__index">05 &mdash; Prototype, assessed honestly</p>
+        <h2 class="project__title">Decibels</h2>
+        <p class="project__lede">
+          An agentic phone relay built Deaf-first. Type a goal, a voice agent
+          places the call, beats the phone menu, and streams every word to a live
+          caption UI you can interrupt mid-call.
+        </p>
+        <p class="project__role">Hackathon build &middot; shipped as a demo, not as a product</p>
+      </div>
+
+      <div class="prose">
+        <p>
+          This one is included with its weaknesses attached, because the
+          interesting engineering is in both halves.
+        </p>
+
+        <h3>What works, and why it was hard</h3>
+        <p>
+          The transcript revision logic is the part I am proudest of. The SDK
+          exposes no final-versus-interim flag, so the agent infers finality from
+          a new utterance ID, from agent speech, or from session end, then
+          re-posts the same ID so the caption updates in place rather than
+          duplicating. A single-worker queue keeps ordering intact.
+        </p>
+        <p>
+          Safety defaults were deliberate: the agent discloses it is an AI at the
+          start of every call, the destination number always comes from the form
+          and never from the model, and phone-menu navigation avoids
+          language-switch and hang-up options and stays on the line when a menu is
+          ambiguous. If the planning model fails, the goal falls back to the raw
+          objective and the summary to a transcript-only version, so a call always
+          completes and always returns a result.
+        </p>
+
+        <table class="scorecard">
+          <caption>My own assessment, out of 10</caption>
+          <thead>
+            <tr><th scope="col">Dimension</th><th scope="col">Score</th><th scope="col">Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Real-time transcript handling</td><td class="score-hi">9</td><td>Revises in place by utterance ID, finalizes when superseded, ordered queue</td></tr>
+            <tr><td>Demo and storytelling</td><td class="score-hi">9</td><td>Full loop works; the video carries no real identifiers</td></tr>
+            <tr><td>Code clarity</td><td class="score-hi">8</td><td>Small modules, typed event contracts mirrored across Python and TypeScript</td></tr>
+            <tr><td>UI accessibility</td><td class="score-mid">7</td><td>Contrast documented, live regions, reduced motion. Speaker identity still relies on colour and position</td></tr>
+            <tr><td>Agent and phone-menu logic</td><td class="score-mid">6</td><td>Safe defaults, but the regex is brittle and competes with the model</td></tr>
+            <tr><td>Deaf-user completeness</td><td class="score-mid">5</td><td>No verbatim relay, no take-over, no hold or voicemail handling</td></tr>
+            <tr><td>Security and abuse resistance</td><td class="score-lo">3</td><td>Endpoints open, dialing allowlist off by default</td></tr>
+            <tr><td>Scale and deployability</td><td class="score-lo">2</td><td>One global call, in-process event bus, nothing persisted</td></tr>
+            <tr><td>Tests and docs</td><td class="score-lo">2</td><td>None, and three of four READMEs are templates</td></tr>
+          </tbody>
+        </table>
+
+        <h3>What I would fix before it ships</h3>
+        <p class="thesis">
+          It is a careful demo and an unsafe product. Those are different claims,
+          and only one of them is on the repo.
+        </p>
+        <ul>
+          <li><strong>Lock it down.</strong> Authentication, signed ingest events, dialing allowlist on by default, rate limiting, and real identifiers out of the repository.</li>
+          <li><strong>Make it durable.</strong> Per-call IDs, Postgres for history, managed pub/sub for live events, so a page refresh never wipes a deaf user's transcript.</li>
+          <li><strong>Close the accessibility loop.</strong> Let the agent ask the user mid-call instead of guessing. Verbatim relay mode, hang-up and take-over controls, hold and voicemail handling.</li>
+          <li><strong>Measure outcomes.</strong> Success rate, time to reach a human, cost per call, and a simulated phone-menu test bench so every change is regression-tested.</li>
+        </ul>
+
+        <ul class="stack">
+          <li>Next.js 16</li><li>Python</li><li>FastAPI</li>
+          <li>Server-sent events</li><li>WebGL</li><li>Voice agent SDK</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- ============ 06 CREDO ============ -->
+    <section class="band" id="credo">
+      <p class="band__label">How I work</p>
+      <div class="credo">
+        <div class="credo__item">
+          <p class="credo__rule">Models interpret. They never authorize.</p>
+          <p class="credo__proof">
+            In Signum, no agent can publish an advisory. A broker-level ACL makes
+            the deterministic compiler the single writer, so the guarantee holds
+            even if every model in the pipeline is wrong at once.
+          </p>
+        </div>
+        <div class="credo__item">
+          <p class="credo__rule">Build the evaluation so you cannot cheat it.</p>
+          <p class="credo__proof">
+            Each variant in Signum's ablation is a configuration flag on one
+            codebase. There is no second implementation to quietly favour, which
+            is the only reason the numbers mean anything.
+          </p>
+        </div>
+        <div class="credo__item">
+          <p class="credo__rule">Two sources of truth will diverge. Generate one from the other.</p>
+          <p class="credo__proof">
+            Six frame validators were silently rejecting every pipeline message
+            because hand-written contracts had drifted across a language boundary.
+            I replaced both with fixtures generated from the server's own
+            builders. The class of bug is gone, not the instance.
+          </p>
+        </div>
+        <div class="credo__item">
+          <p class="credo__rule">The happy path is rarely where the work is.</p>
+          <p class="credo__proof">
+            Most of the Flosstime engineering went into incomplete data,
+            disagreeing managers and contradicting rules. Handling those quietly
+            is what made managers trust it enough to actually use it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="foot">
+      <p>Mridhul Sharma &middot; Boston, MA</p>
+      <p><a href="https://github.com/MridhulSharma">github.com/MridhulSharma</a></p>
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>

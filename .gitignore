@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# builds
+.next/
+out/
+dist/
+build/
+
+# env — never commit these
+.env
+.env.*
+!.env.example
+
+# 3D source assets (Phase 1)
+# Keep optimized .glb in the repo; keep .blend and raw exports out.
+*.blend
+*.blend1
+assets/3d/raw/
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# raw captures — encoded versions live in media/
+pics/*.mp4
+pics/*.mov
